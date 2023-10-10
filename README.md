@@ -30,7 +30,9 @@ Currently the wallet does not cover the creation of tokens and PIPE | Art. For t
 ## Usage
 
 Enter the document root of the PIPE wallet and proceed with the following commands.
-You might need to wait for the wallet to fully index before it returns results:
+You might need to wait for the wallet to fully index before it returns results. 
+
+If running on testnet or signet, you need to add the "testnet" argument at the end of each command. This is very important, especially upon initial and continuous indexing.
 
 ```
 Create a new wallet with name <walletname>
