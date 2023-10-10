@@ -10,6 +10,8 @@ Currently the wallet does not cover the creation of tokens and PIPE | Art. For t
 - https://www.pipex.space/
 - https://pipemint.xyz/
 
+NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees everything will work perfectly!
+
 ## Requirements
 
 - Windows, Linux (macOS should work, too)
@@ -101,3 +103,4 @@ node pipe.mjs getcollectiblemax <collectionaddress>
 - Token and art creation
 - Auto re-indexing upon reorgs
 - Modularization of code & tests
+- Testing, testing, testing
