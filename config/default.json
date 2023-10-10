@@ -1,0 +1,4 @@
+{
+  "bitcoin_cli_path": "/home/muffin/btcnode/bitcoin-24.0.1/bin/bitcoin-cli",
+  "start_block": 809607
+}
