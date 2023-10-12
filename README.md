@@ -34,6 +34,7 @@ NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees
 If you update straight from the sources, makes sure to run npm install to get the latest package state:
 
 ```
+cd /path/to/pipe/
 npm install
 ```
 
