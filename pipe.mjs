@@ -1,6 +1,9 @@
 import { Address, Script, Signer, Tap, Tx } from '@cmdcode/tapscript';
 import { Level } from 'level';
-import bip32 from "bip32";
+import * as ecc from 'tiny-secp256k1';
+import _bip32 from "bip32";
+const { BIP32Factory } = _bip32;
+const bip32 = BIP32Factory(ecc);
 import bip39 from "bip39";
 import {exec} from "child_process";
 import Os from 'os'
@@ -151,29 +154,29 @@ if(process.argv.length !== 0)
         case 'walletrestore':
             if(await mustIndex()) {
                 block += 1;
-                await index(typeof process.argv[5] === 'undefined' ? 'main' : process.argv[5]);
+                await index(typeof process.argv[6] === 'undefined' ? 'main' : process.argv[6]);
             }
-            if(typeof process.argv[5] !== 'undefined')
+            if(typeof process.argv[6] !== 'undefined')
             {
-                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], process.argv[5])+"\n");
+                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== '' ? process.argv[5] : null, process.argv[6])+"\n");
             }
             else
             {
-                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4])+"\n");
+                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== '' ? process.argv[5] : null)+"\n");
             }
             break;
         case 'walletcreate':
             if(await mustIndex()) {
                 block += 1;
-                await index(typeof process.argv[4] === 'undefined' ? 'main' : process.argv[4]);
+                await index(typeof process.argv[5] === 'undefined' ? 'main' : process.argv[5]);
             }
-            if(typeof process.argv[4] !== 'undefined')
+            if(typeof process.argv[5] !== 'undefined')
             {
-                process.stdout.write(await createWallet(process.argv[3], false, null, process.argv[4])+"\n");
+                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== '' ? process.argv[4] : null, process.argv[5])+"\n");
             }
             else
             {
-                process.stdout.write(await createWallet(process.argv[3], false, null)+"\n");
+                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== '' ? process.argv[4] : null)+"\n");
             }
             break;
         case 'newaddress':
@@ -1742,7 +1745,7 @@ async function addressToScriptPubKey(to, network)
     return _script;
 }
 
-async function createWallet(name, restore = false, phrase = null, network = 'main')
+async function createWallet(name, restore = false, phrase = null, derivation_path = null, network = 'main')
 {
     try
     {
@@ -1755,9 +1758,7 @@ async function createWallet(name, restore = false, phrase = null, network = 'mai
             },
             pubKeyHash: 0x00,
             scriptHash: 0x05,
-            wif: 0x80,
-            bytes: 21,
-            versionBytes: 1
+            wif: 0x80
         };
 
         const network_testnet = {
@@ -1769,9 +1770,7 @@ async function createWallet(name, restore = false, phrase = null, network = 'mai
             },
             pubKeyHash: 0x6f,
             scriptHash: 0xc4,
-            wif: 0xef,
-            bytes: 21,
-            versionBytes: 1
+            wif: 0xef
         };
 
         const networks = {
@@ -1779,12 +1778,21 @@ async function createWallet(name, restore = false, phrase = null, network = 'mai
             'testnet' : network_testnet
         }
 
-        let path = `m/86'/0'/0`;
+        let path = `m/86'/0'/0'`;
 
-        if(network === 'testnet')
+        if(derivation_path !== null)
         {
-            path = `m/49'/1'/0'/0`;
+            path = derivation_path;
         }
+        else
+        {
+            if(network === 'testnet')
+            {
+                path = `m/49'/1'/0'/0`;
+            }
+        }
+
+        bip39.setDefaultWordlist('english');
 
         let mnemonic;
 
@@ -1800,29 +1808,29 @@ async function createWallet(name, restore = false, phrase = null, network = 'mai
         const seed = bip39.mnemonicToSeedSync(mnemonic);
         let root = bip32.fromSeed(seed, networks[network]);
         let account = root.derivePath(path);
-        let node = account.derive(0).derive(0);
 
-        const desc_result = await exe(btc_cli_path + ' getdescriptorinfo "tr(' + node.toBase58() + '/*)"');
+        const desc_result = await exe(btc_cli_path + ' getdescriptorinfo "tr(' + account.toBase58() + '/0/*)"');
         const desc_result2 = JSON.parse(desc_result.trim());
+
+        console.log(desc_result2);
+
         await exe(btc_cli_path + ' -named createwallet wallet_name='+name+' descriptors=true');
 
         if(isWindows())
         {
-            await exe(btc_cli_path + " -rpcwallet="+name+" importdescriptors [{\\\"desc\\\":\\\"tr("+node.toBase58()+"/*)#"+desc_result2.checksum+"\\\",\\\"timestamp\\\":"+(Math.floor(Date.now() / 1000))+",\\\"active\\\":true}]");
+            await exe(btc_cli_path + " -rpcwallet="+name+" importdescriptors [{\\\"desc\\\":\\\"tr("+account.toBase58()+"/0/*)#"+desc_result2.checksum+"\\\",\\\"timestamp\\\":\\\"now\\\",\\\"active\\\":true,\\\"internal\\\":false}]");
         }
         else
         {
-            await exe(btc_cli_path + " -rpcwallet="+name+' importdescriptors \'[{"desc":"tr('+node.toBase58()+'/*)#'+desc_result2.checksum+'","timestamp":'+(Math.floor(Date.now() / 1000))+',"active":true}]\'');
+            await exe(btc_cli_path + " -rpcwallet="+name+' importdescriptors \'[{"desc":"tr('+account.toBase58()+'/0/*)#'+desc_result2.checksum+'","timestamp":"now","active":true,"internal":false}]\'');
         }
-
-        const address = await exe(btc_cli_path + ' -rpcwallet='+name+' getnewaddress -addresstype bech32m');
 
         const result = {
             error : false,
-            address : address.trim(),
             mnemonic : mnemonic,
-            key_base58 : node.toBase58(),
-            key_wif : node.toWIF()
+            privkey : account.toBase58(),
+            pubkey : account.neutered().toBase58(),
+            wif : account.toWIF()
         };
 
         return JSON.stringify(result);
