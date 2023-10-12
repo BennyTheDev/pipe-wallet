@@ -29,6 +29,15 @@ NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees
   - Full path required
   - Quote backslashes if you are using them on Windows
 
+## Updates
+
+If you update straight from the sources, makes sure to run npm install to get the latest package state:
+
+```
+cd /path/to/pipe/
+npm install
+```
+
 ## Usage
 
 Enter the document root of the PIPE wallet and proceed with the following commands.
@@ -45,13 +54,24 @@ node pipe.mjs walletcreate <walletname>
 ```
 Import a wallet using a seed phrase for a new local wallet <walletname>
 
-node pipe.mjs walletrestore <walletname> "<seedphrase>"
+node pipe.mjs walletrestore <walletname> "<seedphrase>" <optional: custom derivation path>
+
+Note: after restore, you might not see your balances using the "getbalances".
+In order to load your balances, please use bitcoin-cli's "rescanblockchain" command separately:
+
+/path/to/bitcoin-cli -rpcwallet=<walletname> rescanblockchain 809607
+
+or Windows
+
+d:/path/to/bitcoin-cli.exe -rpcwallet=<walletname> rescanblockchain 809607
+
+809607 is the earliest block relevant for tokens. If you own satoshis from before, you'll need to set an earlier block.
 ```
 
 ```
 Create a new wallet address for wallet <walletname>
 
-node pipe.mjs newaddress <walletname>
+node pipe.mjs newaddress <walletname> <optional: custom derivation path>
 ```
 
 ``` 
