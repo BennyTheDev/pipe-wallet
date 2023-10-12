@@ -29,6 +29,14 @@ NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees
   - Full path required
   - Quote backslashes if you are using them on Windows
 
+## Updates
+
+If you update straight from the sources, makes sure to run npm install to get the latest package state:
+
+```
+npm install
+```
+
 ## Usage
 
 Enter the document root of the PIPE wallet and proceed with the following commands.
