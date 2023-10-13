@@ -1812,8 +1812,6 @@ async function createWallet(name, restore = false, phrase = null, derivation_pat
         const desc_result = await exe(btc_cli_path + ' getdescriptorinfo "tr(' + account.toBase58() + '/0/*)"');
         const desc_result2 = JSON.parse(desc_result.trim());
 
-        console.log(desc_result2);
-
         await exe(btc_cli_path + ' -named createwallet wallet_name='+name+' descriptors=true');
 
         if(isWindows())
