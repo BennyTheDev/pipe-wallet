@@ -1791,23 +1791,21 @@ async function createWallet(name, restore = false, phrase = null, derivation_pat
                 path = `m/49'/1'/0'/0`;
             }
         }
-
-        bip39.setDefaultWordlist('english');
-
-        let mnemonic;
-
+        
         if(!restore)
         {
-            mnemonic = bip39.generateMnemonic();
+            bip39.setDefaultWordlist('english');
+            const mnemonic = bip39.generateMnemonic();
+            const seed = bip39.mnemonicToSeedSync(mnemonic);
+            let root = bip32.fromSeed(seed, networks[network]);
         }
         else
         {
-            mnemonic = phrase;
+            const privateKey = Buffer.from(phrase, 'hex');
+            const root = bip32.fromPrivateKey(privateKey, networks[network]);
         }
-
-        const seed = bip39.mnemonicToSeedSync(mnemonic);
-        let root = bip32.fromSeed(seed, networks[network]);
-        let account = root.derivePath(path);
+            
+        const account = root.derivePath(path);
 
         const desc_result = await exe(btc_cli_path + ' getdescriptorinfo "tr(' + account.toBase58() + '/0/*)"');
         const desc_result2 = JSON.parse(desc_result.trim());
