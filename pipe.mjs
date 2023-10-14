@@ -444,8 +444,6 @@ async function index(network = 'main')
                 const hex = tx.tx[i].hex;
                 const res = Tx.decode(hex);
 
-                if(res.vout.length < 2) continue;
-
                 let op_return_vout = -1;
                 let op_return_count = 0;
                 let decoded = null;
@@ -525,6 +523,7 @@ async function index(network = 'main')
                 )
                 {
                     if(op_return_count !== 1) continue;
+                    if(res.vout.length < 2) continue;
 
                     switch(decoded[2])
                     {
