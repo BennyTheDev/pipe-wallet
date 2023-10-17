@@ -126,29 +126,29 @@ if(process.argv.length !== 0)
         case 'sendtokens':
             if(await mustIndex()) {
                 block += 1;
-                await index(typeof process.argv[9] === 'undefined' ? 'main' : process.argv[9]);
+                await index(typeof process.argv[10] === 'undefined' ? 'main' : process.argv[10]);
             }
-            if(typeof process.argv[9] === 'undefined')
+            if(typeof process.argv[10] === 'undefined')
             {
-                process.stdout.write(await sendTokens(process.argv[3], process.argv[4], process.argv[5], process.argv[6], process.argv[7], process.argv[8], 0) + "\n");
+                process.stdout.write(await sendTokens(process.argv[3], process.argv[4], process.argv[5], process.argv[6], process.argv[7], process.argv[8], 0, typeof process.argv[9] !== 'undefined' && process.argv[9] !== 'null' ? process.argv[9] : null) + "\n");
             }
             else
             {
-                process.stdout.write(await sendTokens(process.argv[3], process.argv[4], process.argv[5], process.argv[6], process.argv[7], process.argv[8], 0, process.argv[9]) + "\n");
+                process.stdout.write(await sendTokens(process.argv[3], process.argv[4], process.argv[5], process.argv[6], process.argv[7], process.argv[8], 0, typeof process.argv[9] !== 'undefined' && process.argv[9] !== 'null' ? process.argv[9] : null, process.argv[10]) + "\n");
             }
             break;
         case 'sendsats':
             if(await mustIndex()) {
                 block += 1;
-                await index(typeof process.argv[7] === 'undefined' ? 'main' : process.argv[7]);
+                await index(typeof process.argv[8] === 'undefined' ? 'main' : process.argv[8]);
             }
-            if(typeof process.argv[7] === 'undefined')
+            if(typeof process.argv[8] === 'undefined')
             {
-                process.stdout.write(await sendSats(process.argv[3], process.argv[4], process.argv[5], process.argv[6], 0) + "\n");
+                process.stdout.write(await sendSats(process.argv[3], process.argv[4], process.argv[5], process.argv[6], 0, typeof process.argv[7] !== 'undefined' && process.argv[7] !== 'null' ? process.argv[7] : null) + "\n");
             }
             else
             {
-                process.stdout.write(await sendSats(process.argv[3], process.argv[4], process.argv[5], process.argv[6], 0, process.argv[7]) + "\n");
+                process.stdout.write(await sendSats(process.argv[3], process.argv[4], process.argv[5], process.argv[6], 0, typeof process.argv[7] !== 'undefined' && process.argv[7] !== 'null' ? process.argv[7] : null, process.argv[8]) + "\n");
             }
             break;
         case 'walletrestore':
@@ -158,11 +158,11 @@ if(process.argv.length !== 0)
             }
             if(typeof process.argv[6] !== 'undefined')
             {
-                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== '' ? process.argv[5] : null, process.argv[6])+"\n");
+                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== 'null' ? process.argv[5] : null, process.argv[6])+"\n");
             }
             else
             {
-                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== '' ? process.argv[5] : null)+"\n");
+                process.stdout.write(await createWallet(process.argv[3], true, process.argv[4], typeof process.argv[5] !== 'undefined' && process.argv[5] !== 'null' ? process.argv[5] : null)+"\n");
             }
             break;
         case 'walletcreate':
@@ -172,11 +172,11 @@ if(process.argv.length !== 0)
             }
             if(typeof process.argv[5] !== 'undefined')
             {
-                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== '' ? process.argv[4] : null, process.argv[5])+"\n");
+                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== 'null' ? process.argv[4] : null, process.argv[5])+"\n");
             }
             else
             {
-                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== '' ? process.argv[4] : null)+"\n");
+                process.stdout.write(await createWallet(process.argv[3], false, null, typeof process.argv[4] !== 'undefined' && process.argv[4] !== 'null' ? process.argv[4] : null)+"\n");
             }
             break;
         case 'newaddress':
@@ -320,6 +320,13 @@ async function getBalance(address, ticker, id)
  */
 async function getBalances(name)
 {
+    try
+    {
+        await exe(btc_cli_path + ' unloadwallet ' + name);
+    }  catch(f) {}
+
+    await exe(btc_cli_path + ' loadwallet '+name);
+
     const unspent_result = await exe(btc_cli_path + ' -rpcwallet='+name+' listunspent', { maxBuffer: 1024 * 1024 * 10000 });
     const unspents = JSON.parse(unspent_result.trim());
     let balances = { sats : 0n, btc : 0};
@@ -517,9 +524,9 @@ async function index(network = 'main')
 
                 if(
                     decoded !== null &&
-                        decoded.length > 2 &&
-                            decoded[0] === 'OP_RETURN' &&
-                                decoded[1] === op_table.p
+                    decoded.length > 2 &&
+                    decoded[0] === 'OP_RETURN' &&
+                    decoded[1] === op_table.p
                 )
                 {
                     if(op_return_count !== 1) continue;
@@ -1131,8 +1138,8 @@ async function indexDeployment(block, blockhash, vout, tx, res, ops, network = '
 
                             if(typeof decoded[number_position+3] !== 'undefined' &&
                                 decoded[number_position+3] === op_table.b &&
-                                    typeof decoded[number_position+4] !== 'undefined' &&
-                                        decoded[number_position+4] !== 'OP_0')
+                                typeof decoded[number_position+4] !== 'undefined' &&
+                                decoded[number_position+4] !== 'OP_0')
                             {
                                 mint_to_beneficiary = true;
                                 mint_to_beneficiary_output = decoded[number_position+4].startsWith('OP_') && typeof op_table['i_'+decoded[number_position+4]] !== 'undefined' ? op_table['i_'+decoded[number_position+4]] : parseInt(decoded[number_position+4], 16);
@@ -1364,9 +1371,8 @@ async function indexDeployment(block, blockhash, vout, tx, res, ops, network = '
  * @param network
  * @returns {Promise<string>}
  */
-async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, network = 'main')
+async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_change_address = null, network = 'main')
 {
-
     ticker = ticker.trim().toLowerCase();
     id = parseInt(id.trim());
 
@@ -1407,9 +1413,9 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, netwo
 
             if(
                 utxos[i].confirmations > 0 &&
-                    utxos[i].spendable &&
-                        utxos[i].solvable &&
-                            utxos[i].safe
+                utxos[i].spendable &&
+                utxos[i].solvable &&
+                utxos[i].safe
             )
             {
                 const utxo = 'utxo_' + utxos[i].txid + '_' + utxos[i].vout;
@@ -1457,10 +1463,10 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, netwo
 
             if(
                 !token_utxo_exists &&
-                    utxos[i].confirmations > 0 &&
-                        utxos[i].spendable &&
-                            utxos[i].solvable &&
-                                utxos[i].safe
+                utxos[i].confirmations > 0 &&
+                utxos[i].spendable &&
+                utxos[i].solvable &&
+                utxos[i].safe
             )
             {
                 vin.push({
@@ -1488,9 +1494,18 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, netwo
             scriptPubKey: await addressToScriptPubKey(to, network)
         });
 
-        let addr_result = await createAddress(name, false);
-        addr_result = JSON.parse(addr_result.trim());
-        change_address = addr_result.address;
+        let addr_result;
+
+        if(use_change_address === null)
+        {
+            addr_result = await createAddress(name, false);
+            addr_result = JSON.parse(addr_result.trim());
+            change_address = addr_result.address;
+        }
+        else
+        {
+            change_address = use_change_address;
+        }
 
         const ec = new TextEncoder();
         let conv_amount = cleanFloat(formatNumberString(amount.toString(), deployment.dec));
@@ -1526,9 +1541,12 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, netwo
             vout : vout
         });
 
-        addr_result = await createAddress(name, false);
-        addr_result = JSON.parse(addr_result.trim());
-        change_address = addr_result.address;
+        if(use_change_address === null)
+        {
+            addr_result = await createAddress(name, false);
+            addr_result = JSON.parse(addr_result.trim());
+            change_address = addr_result.address;
+        }
 
         const hex = Tx.encode(txdata).hex;
 
@@ -1582,7 +1600,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, netwo
  * @param network
  * @returns {Promise<string>}
  */
-async function sendSats(name, to, amount, rate, max_fee = 0, network = 'main')
+async function sendSats(name, to, amount, rate, max_fee = 0, use_change_address = null, network = 'main')
 {
     amount = BigInt(''+amount);
     rate = BigInt(''+rate);
@@ -1623,10 +1641,10 @@ async function sendSats(name, to, amount, rate, max_fee = 0, network = 'main')
 
             if(
                 !token_utxo_exists &&
-                    utxos[i].confirmations > 0 &&
-                        utxos[i].spendable &&
-                            utxos[i].solvable &&
-                                utxos[i].safe
+                utxos[i].confirmations > 0 &&
+                utxos[i].spendable &&
+                utxos[i].solvable &&
+                utxos[i].safe
             )
             {
                 vin.push({
@@ -1656,9 +1674,18 @@ async function sendSats(name, to, amount, rate, max_fee = 0, network = 'main')
 
         const hex = Tx.encode(txdata).hex;
 
-        let addr_result = await createAddress(name, false);
-        addr_result = JSON.parse(addr_result.trim());
-        change_address = addr_result.address;
+        let addr_result;
+
+        if(use_change_address === null)
+        {
+            addr_result = await createAddress(name, false);
+            addr_result = JSON.parse(addr_result.trim());
+            change_address = addr_result.address;
+        }
+        else
+        {
+            change_address = use_change_address;
+        }
 
         let fund_result;
 
@@ -1822,7 +1849,11 @@ async function createWallet(name, restore = false, phrase = null, derivation_pat
             await exe(btc_cli_path + " -rpcwallet="+name+' importdescriptors \'[{"desc":"tr('+account.toBase58()+'/0/*)#'+desc_result2.checksum+'","timestamp":"now","active":true,"internal":false}]\'');
         }
 
+        let addr_result = await createAddress(name, false);
+        addr_result = JSON.parse(addr_result.trim());
+
         const result = {
+            addr_result : addr_result,
             error : false,
             mnemonic : mnemonic,
             privkey : account.toBase58(),
@@ -2056,8 +2087,8 @@ function hexToBytes(hex) {
 function isHex(value)
 {
     return typeof value === 'string' &&
-    value.length % 2 === 0  &&
-    /[0-9a-fA-F]/.test(value)
+        value.length % 2 === 0  &&
+        /[0-9a-fA-F]/.test(value)
 }
 
 function toString26(num) {

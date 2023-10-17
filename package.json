@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@cmdcode/tapscript": "1.2.7",
-    "bip32": "3.0.1",
+    "bip32": "4.0.0",
     "bip39": "^3.1.0",
     "config": "^3.3.9",
     "cuid": "^3.0.0",
