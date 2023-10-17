@@ -89,13 +89,13 @@ node pipe.mjs getbalance <address> <ticker> <ID>
 ``` 
 Send tokens to a receiver from <walletname>:
 
-node pipe.mjs sendtokens <walletname> <address> <ticker> <ID> <amount> <feerate>
+node pipe.mjs sendtokens <walletname> <address> <ticker> <ID> <amount> <feerate> <optional: custom change address>
 ```
 
 ``` 
 Send sats to a receiver from <walletname>:
 
-node pipe.mjs sendsats <walletname> <address> <amount> <feerate>
+node pipe.mjs sendsats <walletname> <address> <amount> <feerate> <optional: custom change address>
 ```
 
 ``` 
