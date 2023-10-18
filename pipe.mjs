@@ -1406,7 +1406,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(found >= amount * 2n)
+            if(found >= amount)
             {
                 break;
             }
@@ -1445,7 +1445,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(sats_found >= sats_amount * rate)
+            if(sats_found >= sats_amount * rate * 2n)
             {
                 break;
             }
