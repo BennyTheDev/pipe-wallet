@@ -1406,7 +1406,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(found >= amount)
+            if(found >= amount * 2)
             {
                 break;
             }
@@ -1623,7 +1623,7 @@ async function sendSats(name, to, amount, rate, max_fee = 0, use_change_address 
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(found >= amount * rate)
+            if(found >= amount * rate * 2)
             {
                 break;
             }
