@@ -1445,7 +1445,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(sats_found >= sats_amount * rate * 2n)
+            if(sats_found >= sats_amount * rate)
             {
                 break;
             }
@@ -1457,7 +1457,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
                 const utxo = 'utxo_' + utxos[i].txid + '_' + utxos[i].vout;
                 await db.get(utxo);
                 token_utxo_exists = true;
-                console.log('exists', utxo);
+                //console.log('exists', utxo);
 
             } catch(e){}
 
@@ -1623,7 +1623,7 @@ async function sendSats(name, to, amount, rate, max_fee = 0, use_change_address 
 
         for(let i = 0; i < utxos.length; i++)
         {
-            if(found >= amount * rate * 2n)
+            if(found >= amount * rate)
             {
                 break;
             }
@@ -1635,7 +1635,7 @@ async function sendSats(name, to, amount, rate, max_fee = 0, use_change_address 
                 const utxo = 'utxo_' + utxos[i].txid + '_' + utxos[i].vout;
                 await db.get(utxo);
                 token_utxo_exists = true;
-                console.log('exists', utxo);
+                //console.log('exists', utxo);
 
             } catch(e){}
 
