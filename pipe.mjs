@@ -799,6 +799,13 @@ async function indexTransfer(block, blockhash, vout, tx, res, ops, network = 'ma
 
         for(let i = 0; i < utxos.length; i++)
         {
+            let sig = utxos[i].tick + '-' + utxos[i].id;
+
+            if(typeof spent_token_count[sig] === 'undefined' || typeof token_count[sig] === 'undefined')
+            {
+                return;
+            }
+
             const utxo = 'utxo_' + utxos[i].txid + '_' + utxos[i].vout;
             const address_amt = 'a_' + utxos[i].addr + '_' + utxos[i].tick + '_' + utxos[i].id;
 
