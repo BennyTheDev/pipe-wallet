@@ -9,7 +9,6 @@ Currently the wallet does not cover the creation of tokens and PIPE | Art. For t
 - https://inspip.com/
 - https://ppline.app/
 - https://www.pipex.space/
-- https://pipemint.xyz/
 
 NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees everything will work perfectly!
 
