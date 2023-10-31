@@ -6,7 +6,7 @@ The wallet is based on the PIPE | DMT specs found here: https://github.com/Benny
 
 Currently the wallet does not cover the creation of tokens and PIPE | Art. For those please consult available 3rd party services:
 
-- https://pipe.inscrib3.land/
+- https://inspip.com/
 - https://ppline.app/
 - https://www.pipex.space/
 - https://pipemint.xyz/
