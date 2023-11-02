@@ -47,74 +47,67 @@ You might need to wait for the wallet to fully index before it returns results.
 
 If running on testnet or signet, you need to add the "testnet" argument at the end of each command. This is very important, especially upon initial and continuous indexing.
 
-```
-Create a new wallet with name <walletname>
 
+Create a new wallet with name <walletname>
+```
 node pipe.mjs walletcreate <walletname>
 ```
 
-```
 Import a wallet using a seed phrase for a new local wallet <walletname>
-
+```
 node pipe.mjs walletrestore <walletname> "<seedphrase>" <optional: custom derivation path>
+```
 
 Note: after restore, you might not see your balances using the "getbalances".
 In order to load your balances, please use bitcoin-cli's "rescanblockchain" command separately:
 
+```
 /path/to/bitcoin-cli -rpcwallet=<walletname> rescanblockchain 809607
+```
 
 or Windows
-
+```
 d:/path/to/bitcoin-cli.exe -rpcwallet=<walletname> rescanblockchain 809607
-
+```
 809607 is the earliest block relevant for tokens. If you own satoshis from before, you'll need to set an earlier block.
-```
 
-```
 Create a new wallet address for wallet <walletname>
-
+```
 node pipe.mjs newaddress <walletname> <optional: custom derivation path>
 ```
 
-``` 
 Get all sats and token balances for a wallet:
-
+``` 
 node pipe.mjs getbalances <walletname>
 ```
 
-``` 
 Get token balance for a specific <address> associated with it utxo:
-
+``` 
 node pipe.mjs getbalance <address> <ticker> <ID>
 ```
 
-``` 
 Send tokens to a receiver from <walletname>:
-
+``` 
 node pipe.mjs sendtokens <walletname> <address> <ticker> <ID> <amount> <feerate> <optional: custom change address>
 ```
 
-``` 
 Send sats to a receiver from <walletname>:
-
+``` 
 node pipe.mjs sendsats <walletname> <address> <amount> <feerate> <optional: custom change address>
 ```
 
-``` 
 Get deployment details for a specific token:
-
+``` 
 node pipe.mjs getdeployment <ticker> <ID>
 ```
 
-``` 
 Get collectible details for a specific collection and item number:
-
+``` 
 node pipe.mjs getcollectible <collectionaddress> <number>
 ```
 
-``` 
 Get the max. number for a collection:
-
+``` 
 node pipe.mjs getcollectiblemax <collectionaddress>
 ```
 
