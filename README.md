@@ -8,6 +8,7 @@ Currently the wallet does not cover the creation of tokens and PIPE | Art. For t
 
 - https://inspip.com/
 - https://ppline.app/
+- https://www.satsx.io/
 - https://www.pipex.space/
 
 NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees everything will work perfectly!
