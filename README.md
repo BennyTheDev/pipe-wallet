@@ -6,9 +6,10 @@ The wallet is based on the PIPE | DMT specs found here: https://github.com/Benny
 
 Currently the wallet does not cover the creation of tokens and PIPE | Art. For those please consult available 3rd party services:
 
-- https://pipe.inscrib3.land/
+- https://inspip.com/
+- https://ppline.app/
+- https://www.satsx.io/
 - https://www.pipex.space/
-- https://pipemint.xyz/
 
 NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees everything will work perfectly!
 
@@ -28,6 +29,8 @@ NOTE: this is a pre-alpha release of the PIPE wallet and there are no guarantees
   - Point to your bitcoin-cli (bitcoin-cli.exe)
   - Full path required
   - Quote backslashes if you are using them on Windows
+- For faster indexing, you may optionally download the pipe db (https://trac.network/pipe-db.zip).
+- - Just download, unzip and put the "pipe" folder into your pipe document root (same location as pipe.mjs)
 
 ## Updates
 
