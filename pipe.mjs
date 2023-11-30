@@ -6,9 +6,10 @@ const { BIP32Factory } = _bip32;
 const bip32 = BIP32Factory(ecc);
 import bip39 from "bip39";
 import {exec} from "child_process";
-import Os from 'os'
-import goodbye from 'graceful-goodbye'
-import config from 'config'
+import Os from 'os';
+import goodbye from 'graceful-goodbye';
+import config from 'config';
+import bitcoin from 'bitcoinjs-lib';
 
 /*
 * WARNING: This is an initial, pre-alpha PIPE protocol POC/MVP PIPE wallet & indexer.
@@ -449,7 +450,10 @@ async function index(network = 'main')
             try
             {
                 const hex = tx.tx[i].hex;
-                const res = Tx.decode(hex);
+                let res = transactionToJson(bitcoin.Transaction.fromHex(hex));
+
+                //let res = await exe(btc_cli_path + ' getrawtransaction "' + tx.tx[i].txid + '" true "' + blockhash + '"', { maxBuffer: 1024 * 1024 * 400});
+                //res = JSON.parse(res.trim());
 
                 let op_return_vout = -1;
                 let op_return_count = 0;
@@ -490,6 +494,7 @@ async function index(network = 'main')
                             {
                                 amt = 0n;
                             }
+
                             await db.put(address_amt, amt.toString());
                             await db.put('spent_' + utxo, _utxo);
                             await db.del(utxo);
@@ -512,9 +517,9 @@ async function index(network = 'main')
                                 spent_token_count[sig] += BigInt(old_utxo.amt);
                             }
                         }
-                        catch(e) {}
+                        catch(e) { }
                     }
-                    catch(e) {}
+                    catch(e) { }
                 }
 
                 try
@@ -610,7 +615,7 @@ async function index(network = 'main')
                     }
                 }
             }
-            catch(e) {}
+            catch(e) { }
         }
 
         await db.put('b', block);
@@ -2235,4 +2240,27 @@ function countDecimals(value){
 function sleep(ms) {
 
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function transactionToJson(tx) {
+    const inputs = tx.ins.map(input => ({
+        txid: Buffer.from(input.hash).reverse().toString('hex'),
+        vout: input.index,
+        scriptPubKey: input.script.toString('hex'),
+        sequence: input.sequence,
+        witness : input.witness
+    }));
+
+    const outputs = tx.outs.map(output => ({
+        value: output.value,
+        scriptPubKey: output.script.toString('hex'),
+    }));
+
+    return {
+        txid: tx.getId(),
+        version: tx.version,
+        locktime: tx.locktime,
+        vin: inputs,
+        vout : outputs,
+    };
 }
