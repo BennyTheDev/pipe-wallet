@@ -1424,7 +1424,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
             }
 
             if(
-                utxos[i].confirmations > 0 &&
+                utxos[i].confirmations >= 3 &&
                 utxos[i].spendable &&
                 utxos[i].solvable &&
                 utxos[i].safe
@@ -1475,7 +1475,7 @@ async function sendTokens(name, to, ticker, id, amount, rate, max_fee = 0, use_c
 
             if(
                 !token_utxo_exists &&
-                utxos[i].confirmations > 0 &&
+                utxos[i].confirmations >= 3 &&
                 utxos[i].spendable &&
                 utxos[i].solvable &&
                 utxos[i].safe
